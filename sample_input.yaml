@@ -1,0 +1,17 @@
+settings:
+  num_teams: 3
+  num_members_in_each_team: [3, 2, 3]
+  members: ["taro", "jiro", "saburo", "kenta", "takashi", "takuya", "hayato", "masao"]
+history:
+  # Latest
+  - [["taro", "jiro", "saburo"], ["kenta", "takashi"], ["takuya", "hayato", "masao"]]
+  - [["taro", "kenta", "takuya"], ["jiro", "masao"], ["saburo", "takashi", "hayato"]]
+  - [["saburo", "masao", "kenta", "takuya"], ["jiro", "taro", "hayato"]]
+  # Oldest
+preferences:
+  - name: "taro"
+    num_min_team_members: 3
+  - name: "jiro"
+    num_min_team_members: 3
+  - name: "takashi"
+    class_affinity: 2
