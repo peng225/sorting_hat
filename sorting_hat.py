@@ -6,7 +6,15 @@ import copy
 import sys
 
 INFINITY = 10000
+INVALID_CLASS_ID = -1
 
+class Preference:
+    class_affinity = INVALID_CLASS_ID
+    num_min_team_members = 0
+
+    def __init__(self, class_affinity=INVALID_CLASS_ID, num_min_team_members=0):
+        self.class_affinity = class_affinity
+        self.num_min_team_members = num_min_team_members
 
 class SortingHat(Annealer):
 
@@ -14,28 +22,32 @@ class SortingHat(Annealer):
         super(SortingHat, self).__init__(init_state)
 
     def move(self):
-        t1 = random.randint(0, len(self.state)-1)
-        t2 = t1
-        while t1 == t2:
-            t2 = random.randint(0, len(self.state)-1)
+        ti1 = random.randint(0, len(self.state)-1)
+        ti2 = ti1
+        while ti1 == ti2:
+            ti2 = random.randint(0, len(self.state)-1)
 
-        m1 = random.sample(self.state[t1], 1)[0]
-        m2 = random.sample(self.state[t2], 1)[0]
-        self.state[t1].remove(m1)
-        self.state[t1].add(m2)
-        self.state[t2].remove(m2)
-        self.state[t2].add(m1)
+        m1 = random.sample(self.state[ti1], 1)[0]
+        m2 = random.sample(self.state[ti2], 1)[0]
+        self.state[ti1].remove(m1)
+        self.state[ti1].add(m2)
+        self.state[ti2].remove(m2)
+        self.state[ti2].add(m1)
 
     def energy(self):
         v = 0.0
+        for ti, team in enumerate(self.state):
+            for member in team:
+                if preferences[member].class_affinity not in [INVALID_CLASS_ID, ti]:
+                    v += INFINITY
+                if len(team) < preferences[member].num_min_team_members:
+                    v += INFINITY
+
         for hi, hist in enumerate(history):
             for ti, team in enumerate(self.state):
                 for member in team:
                     if member in hist[ti]:
                         v += (hi+2.0)/(hi+1.0)
-
-                if affinity[member] != -1 and affinity[member] != ti:
-                    v += INFINITY
 
                 other_members = self.get_other_members(member, team)
                 past_team = self.find_team(member, hist)
@@ -63,21 +75,32 @@ if __name__ == '__main__':
     teams = [i for i in range(num_teams)]
     members = [i for i in range(num_members)]
     history = []
-    history.append([{0, 1, 2}, {3, 4}, {5, 6, 7}])
-    history.append([{0, 3, 5}, {1, 7}, {2, 4, 6}])
-    history.append([{0, 2, 6}, {3, 5}, {1, 4, 7}])
+    history.append([{"taro", "jiro", "saburo"}, {"kenta", "takashi"}, {"takuya", "hayato", "masao"}])
+    history.append([{"taro", "kenta", "takuya"}, {"jiro", "masao"}, {"saburo", "takashi", "hayato"}])
+    history.append([{"taro", "saburo", "hayato"}, {"kenta", "takuya"}, {"jiro", "takashi", "masao"}])
 
     # initial assignment
     init_state = []
-    init_state.append({0, 1, 2})
-    init_state.append({3, 4})
-    init_state.append({5, 6, 7})
+    init_state.append({"taro", "jiro", "saburo"})
+    init_state.append({"kenta", "takashi"})
+    init_state.append({"takuya", "hayato", "masao"})
 
-    affinity = [-1, -1, -1, -1, 2, -1, -1, -1]
+    preferences = {
+        "taro": Preference(num_min_team_members=3),
+        "jiro": Preference(num_min_team_members=3),
+        "saburo": Preference(),
+        "kenta": Preference(),
+        "takashi": Preference(class_affinity=2),
+        "takuya": Preference(),
+        "hayato": Preference(),
+        "masao": Preference(),
+    }
 
     prob = SortingHat(init_state)
     prob.steps = 100000
     prob.copy_strategy = "deepcopy"
     prob.anneal()
 
-    print(prob.state)
+    print()
+    for i, team in enumerate(prob.state):
+        print("team {}: {}".format(i, team))
