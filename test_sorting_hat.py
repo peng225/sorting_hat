@@ -54,5 +54,24 @@ class TestSortingHat(unittest.TestCase):
         self.assertEqual(2, len(output_history[1][1]))
         self.assertEqual(1, len(output_history[1][2]))
 
+    def test_load_preferences(self):
+        # Empty preference
+        input_preferences = dict()
+        sorting_hat.settings.members = []
+        output_preferences = sorting_hat.load_preferences(input_preferences)
+        self.assertEqual(0, len(output_preferences))
+
+        # Two preferences
+        input_preferences = [
+            {'name': 'ryu', 'num_min_team_members': 1},
+            {'name': 'ken', 'num_min_team_members': 2, 'class_anti_affinity': {0, 2}}
+        ]
+        sorting_hat.settings.members =['ryu', 'ken']
+        output_preferences = sorting_hat.load_preferences(input_preferences)
+        self.assertEqual(2, len(output_preferences))
+        self.assertEqual(1, output_preferences['ryu'].num_min_team_members)
+        self.assertEqual(2, output_preferences['ken'].num_min_team_members)
+        self.assertEqual({0, 2}, output_preferences['ken'].class_anti_affinity)
+
 if __name__ == '__main__':
     unittest.main()

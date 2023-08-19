@@ -17,7 +17,7 @@ class Settings:
 settings = Settings()
 
 class Preference:
-    class_anti_affinity = []
+    class_anti_affinity = set()
     num_min_team_members = 0
 
     def __init__(self, class_anti_affinity, num_min_team_members):
@@ -129,13 +129,13 @@ def load_preferences(input_preferences):
         if name not in settings.members:
             print("preference for invalid member '{}' found.".format(name))
             sys.exit(1)
-        class_anti_affinity = []
+        class_anti_affinity = set()
         if 'class_anti_affinity' in pref:
-            class_anti_affinity = pref['class_anti_affinity']
-        num_min_tream_members = 0
-        if 'num_min_tream_members' in pref:
-            num_min_tream_members = pref['num_min_tream_members']
-        preferences[name] = Preference(class_anti_affinity, num_min_tream_members)
+            class_anti_affinity = set(pref['class_anti_affinity'])
+        num_min_team_members = 0
+        if 'num_min_team_members' in pref:
+            num_min_team_members = pref['num_min_team_members']
+        preferences[name] = Preference(class_anti_affinity, num_min_team_members)
 
     return preferences
 
