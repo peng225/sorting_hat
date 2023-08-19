@@ -10,7 +10,6 @@ INFINITY = 10000
 INVALID_CLASS_ID = -1
 
 class Settings:
-    num_teams = 0
     num_members_in_each_team = []
     members = []
 
@@ -96,7 +95,6 @@ def load_input(file_name):
     return h, p
 
 def load_settings(input_settings):
-    settings.num_teams = input_settings['num_teams']
     settings.num_members_in_each_team = input_settings['num_members_in_each_team']
     settings.members = input_settings['members']
 
@@ -137,10 +135,6 @@ def load_preferences(input_preferences):
     return preferences
 
 def main():
-    num_teams = 3
-    num_members = 8
-    teams = [i for i in range(num_teams)]
-    members = [i for i in range(num_members)]
     history, preferences = load_input(sys.argv[1])
 
     # initial assignment
