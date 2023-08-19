@@ -114,7 +114,7 @@ def load_history(input_history):
         for past_team_list in past_teams_list:
             tmp_past_team = set(past_team_list)
             tmp_past_teams.append(copy.copy(tmp_past_team))
-        history.append(copy.copy(tmp_past_teams))
+        history.append(copy.deepcopy(tmp_past_teams))
 
     return history
 
@@ -145,6 +145,13 @@ def generate_initial_state():
         init_state.append(copy.copy(tmpTeam))
     return init_state
 
+def show_result(state):
+    print()
+    print()
+    print("result:")
+    for i, team in enumerate(state):
+        print("team {}: {}".format(i, team))
+
 def main():
     history, preferences = load_input(sys.argv[1])
 
@@ -155,12 +162,7 @@ def main():
     sh.steps = 100000
     sh.copy_strategy = "deepcopy"
     sh.anneal()
-
-    print()
-    print()
-    print("result:")
-    for i, team in enumerate(sh.state):
-        print("team {}: {}".format(i, team))
+    show_result(sh.state)
 
 if __name__ == '__main__':
     main()
