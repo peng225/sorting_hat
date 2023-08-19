@@ -13,4 +13,4 @@ preferences:
   - name: "jiro"
     num_min_team_members: 3
   - name: "takashi"
-    class_affinity: 2
+    class_anti_affinity: [0, 1]

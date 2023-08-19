@@ -11,16 +11,16 @@ INVALID_CLASS_ID = -1
 
 class Settings:
     num_members_in_each_team = []
-    members = []
+    members = set()
 
 settings = Settings()
 
 class Preference:
-    class_affinity = INVALID_CLASS_ID
+    class_anti_affinity = []
     num_min_team_members = 0
 
-    def __init__(self, class_affinity=INVALID_CLASS_ID, num_min_team_members=0):
-        self.class_affinity = class_affinity
+    def __init__(self, class_anti_affinity, num_min_team_members):
+        self.class_anti_affinity = class_anti_affinity
         self.num_min_team_members = num_min_team_members
 
 class SortingHat(Annealer):
@@ -51,24 +51,24 @@ class SortingHat(Annealer):
             for member in team:
                 if member not in self.preferences:
                     continue
-                if self.preferences[member].class_affinity not in [INVALID_CLASS_ID, ti]:
+                if ti in self.preferences[member].class_anti_affinity:
                     v += INFINITY
                 if len(team) < self.preferences[member].num_min_team_members:
                     v += INFINITY
 
-        for hi, hist in enumerate(self.history):
+        for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(self.state):
-                if len(hist) <= ti:
-                    continue
                 for member in team:
-                    if member in hist[ti]:
+                    if ti < len(past_teams) and member in past_teams[ti]:
                         v += (hi+2.0)/(hi+1.0)
 
-                other_members = self.get_other_members(member, team)
-                past_team = self.find_team(member, hist)
-                past_other_members = self.get_other_members(member, past_team)
-                intersect = other_members & past_other_members
-                v += (hi+2.0)/(hi+1.0)*len(intersect)
+                    other_members = team - {member}
+                    past_team = self.find_team(member, past_teams)
+                    if len(past_team) == 0:
+                        continue
+                    past_other_members = past_team - {member}
+                    intersect = other_members & past_other_members
+                    v += (hi+2.0)/(hi+1.0)*len(intersect)
         return v
 
     def find_team(self, member, teams):
@@ -76,13 +76,6 @@ class SortingHat(Annealer):
             if member in team:
                 return team
         return set()
-
-    def get_other_members(self, member, team):
-        if member not in team:
-            return set()
-        tmpTeam = copy.copy(team)
-        tmpTeam.remove(member)
-        return tmpTeam
 
 
 def load_input(file_name):
@@ -96,7 +89,7 @@ def load_input(file_name):
 
 def load_settings(input_settings):
     settings.num_members_in_each_team = input_settings['num_members_in_each_team']
-    settings.members = input_settings['members']
+    settings.members = set(input_settings['members'])
 
     if sum(settings.num_members_in_each_team) != len(settings.members):
         print("invalid settings.")
@@ -104,16 +97,12 @@ def load_settings(input_settings):
 
 def load_history(input_history):
     history = []
-    for hist in input_history:
-        tmpHist = []
-        tmpTeam = set()
-        for team in hist:
-            for member in team:
-                tmpTeam.add(member)
-            tmpHist.append(copy.copy(tmpTeam))
-            tmpTeam.clear()
-        history.append(copy.copy(tmpHist))
-        tmpHist.clear()
+    for past_teams_list in input_history:
+        tmp_past_teams = []
+        for past_team_list in past_teams_list:
+            tmp_past_team = set(past_team_list)
+            tmp_past_teams.append(copy.copy(tmp_past_team))
+        history.append(copy.copy(tmp_past_teams))
 
     return history
 
@@ -124,37 +113,41 @@ def load_preferences(input_preferences):
         if name not in settings.members:
             print("preference for invalid member '{}' found.".format(name))
             sys.exit(1)
-        class_affinity = INVALID_CLASS_ID
-        if 'class_affinity' in pref:
-            class_affinity = pref['class_affinity']
+        class_anti_affinity = []
+        if 'class_anti_affinity' in pref:
+            class_anti_affinity = pref['class_anti_affinity']
         num_min_tream_members = 0
         if 'num_min_tream_members' in pref:
             num_min_tream_members = pref['num_min_tream_members']
-        preferences[name] = Preference(class_affinity, num_min_tream_members)
+        preferences[name] = Preference(class_anti_affinity, num_min_tream_members)
 
     return preferences
+
+def generate_initial_state():
+    init_state = []
+    tmpMembers = copy.copy(settings.members)
+    for num_members in settings.num_members_in_each_team:
+        tmpTeam = set()
+        for i in range(num_members):
+            tmpTeam.add(tmpMembers.pop())
+        init_state.append(copy.copy(tmpTeam))
+    return init_state
 
 def main():
     history, preferences = load_input(sys.argv[1])
 
     # initial assignment
-    init_state = []
-    membersIndex = 0
-    for num_members in settings.num_members_in_each_team:
-        tmpTeam = set()
-        for i in range(num_members):
-            tmpTeam.add(settings.members[membersIndex])
-            membersIndex += 1
-        init_state.append(copy.copy(tmpTeam))
-        tmpTeam.clear()
+    init_state = generate_initial_state()
 
-    prob = SortingHat(init_state, preferences, history)
-    prob.steps = 100000
-    prob.copy_strategy = "deepcopy"
-    prob.anneal()
+    sh = SortingHat(init_state, preferences, history)
+    sh.steps = 100000
+    sh.copy_strategy = "deepcopy"
+    sh.anneal()
 
     print()
-    for i, team in enumerate(prob.state):
+    print()
+    print("result:")
+    for i, team in enumerate(sh.state):
         print("team {}: {}".format(i, team))
 
 if __name__ == '__main__':
