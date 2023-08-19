@@ -17,9 +17,13 @@ class Preference:
         self.num_min_team_members = num_min_team_members
 
 class SortingHat(Annealer):
+    preferences = dict()
+    history = list()
 
-    def __init__(self, init_state):
+    def __init__(self, init_state, preferences, history):
         super(SortingHat, self).__init__(init_state)
+        self.preferences = preferences
+        self.history = history
 
     def move(self):
         ti1 = random.randint(0, len(self.state)-1)
@@ -38,12 +42,12 @@ class SortingHat(Annealer):
         v = 0.0
         for ti, team in enumerate(self.state):
             for member in team:
-                if preferences[member].class_affinity not in [INVALID_CLASS_ID, ti]:
+                if self.preferences[member].class_affinity not in [INVALID_CLASS_ID, ti]:
                     v += INFINITY
-                if len(team) < preferences[member].num_min_team_members:
+                if len(team) < self.preferences[member].num_min_team_members:
                     v += INFINITY
 
-        for hi, hist in enumerate(history):
+        for hi, hist in enumerate(self.history):
             for ti, team in enumerate(self.state):
                 for member in team:
                     if member in hist[ti]:
@@ -69,7 +73,7 @@ class SortingHat(Annealer):
         return tmpTeam
 
 
-if __name__ == '__main__':
+def main():
     num_teams = 3
     num_members = 8
     teams = [i for i in range(num_teams)]
@@ -96,7 +100,7 @@ if __name__ == '__main__':
         "masao": Preference(),
     }
 
-    prob = SortingHat(init_state)
+    prob = SortingHat(init_state, preferences, history)
     prob.steps = 100000
     prob.copy_strategy = "deepcopy"
     prob.anneal()
@@ -104,3 +108,6 @@ if __name__ == '__main__':
     print()
     for i, team in enumerate(prob.state):
         print("team {}: {}".format(i, team))
+
+if __name__ == '__main__':
+    main()
