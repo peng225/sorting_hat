@@ -7,7 +7,7 @@ import sys
 import yaml
 
 INFINITY = 10000
-INVALID_CLASS_ID = -1
+DECAY_RATE = 0.9
 
 class Settings:
     num_members_in_each_team = []
@@ -48,6 +48,8 @@ class SortingHat(Annealer):
 
     def energy(self):
         v = 0.0
+        # Check constraints.
+        # When a constraint is violated, a very large value is added to the energy.
         for ti, team in enumerate(self.state):
             for member in team:
                 if member not in self.preferences:
@@ -67,16 +69,18 @@ class SortingHat(Annealer):
         for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(self.state):
                 for member in team:
+                    # Each member prefers to be assigned to a different team from past assignments.
                     if ti < len(past_teams) and member in past_teams[ti]:
-                        v += (hi+2.0)/(hi+1.0)
+                        v += DECAY_RATE**hi
 
+                    # Different combinations of members are preferable.
                     other_members = team - {member}
                     past_team = self.find_team(member, past_teams)
                     if len(past_team) == 0:
                         continue
                     past_other_members = past_team - {member}
                     intersect = other_members & past_other_members
-                    v += (hi+2.0)/(hi+1.0)*len(intersect)
+                    v += (DECAY_RATE**hi)*len(intersect)
         return v
 
     def find_team(self, member, teams):
@@ -137,12 +141,12 @@ def load_preferences(input_preferences):
 
 def generate_initial_state():
     init_state = []
-    tmpMembers = copy.copy(settings.members)
+    tmp_members = copy.copy(settings.members)
     for num_members in settings.num_members_in_each_team:
-        tmpTeam = set()
+        tmp_team = set()
         for i in range(num_members):
-            tmpTeam.add(tmpMembers.pop())
-        init_state.append(copy.copy(tmpTeam))
+            tmp_team.add(tmp_members.pop())
+        init_state.append(copy.copy(tmp_team))
     return init_state
 
 def show_result(state):
