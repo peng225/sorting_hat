@@ -11,6 +11,7 @@ INVALID_CLASS_ID = -1
 
 class Settings:
     num_members_in_each_team = []
+    num_remaining_members_in_each_team = []
     members = set()
 
 settings = Settings()
@@ -55,6 +56,13 @@ class SortingHat(Annealer):
                     v += INFINITY
                 if len(team) < self.preferences[member].num_min_team_members:
                     v += INFINITY
+            
+            if len(self.history) == 0 or len(self.history) <= ti:
+                continue
+
+            prev_team = self.history[0][ti]
+            if len(team & prev_team) < settings.num_remaining_members_in_each_team[ti]:
+                v += INFINITY
 
         for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(self.state):
@@ -89,6 +97,10 @@ def load_input(file_name):
 
 def load_settings(input_settings):
     settings.num_members_in_each_team = input_settings['num_members_in_each_team']
+    settings.num_remaining_members_in_each_team = input_settings['num_remaining_members_in_each_team']
+    if len(settings.num_members_in_each_team) != len(settings.num_remaining_members_in_each_team):
+        print("The number of elements in 'num_members_in_each_team' and 'num_remaining_members_in_each_team' must be the same.")
+        sys.exit(1)
     settings.members = set(input_settings['members'])
 
     if sum(settings.num_members_in_each_team) != len(settings.members):

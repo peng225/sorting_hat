@@ -1,5 +1,6 @@
 settings:
   num_members_in_each_team: [3, 2, 3]
+  num_remaining_members_in_each_team: [1, 1, 1]
   members: ["taro", "jiro", "saburo", "kenta", "takashi", "takuya", "hayato", "masao"]
 history:
   # Latest
