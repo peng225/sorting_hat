@@ -28,7 +28,7 @@ class SortingHatBruteForce():
 
     def search_helper(self, current_num_members_in_each_team, current_members):
         if sum(current_num_members_in_each_team) == 0:
-            v = self.energy()
+            v = self.ev.evaluate(self.state)
             if v < self.best_energy:
                 self.best_state = copy.deepcopy(self.state)
                 self.best_energy = v
@@ -44,9 +44,6 @@ class SortingHatBruteForce():
             self.state[i].remove(tmp_member)
             current_members.add(tmp_member)
             current_num_members_in_each_team[i] = current_num_members_in_each_team[i] + 1
-
-    def energy(self):
-        return self.ev.evaluate(self.state)
 
 def show_result(state):
     print("result:")
