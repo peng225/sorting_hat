@@ -36,6 +36,9 @@ def load_settings(input_settings):
         print("The number of elements in 'num_members_in_each_team' and 'num_remaining_members_in_each_team' must be the same.")
         return None
     settings.members = set(input_settings['members'])
+    if len(settings.members) <= 1:
+        print("The number of members should be larger than 1.")
+        return None
 
     if sum(settings.num_members_in_each_team) != len(settings.members):
         print("Invalid settings. (settings.num_members_in_each_team = {}, len(settings.members) = {})".format(
