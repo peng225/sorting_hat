@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 
-from simanneal import Annealer
 import random
 import copy
 import sys
+from simanneal import Annealer
 import evaluator
-import input
+import input_handler
 
 INFINITY = 10000
 
 class SortingHat(Annealer):
-    ev = evaluator.Evaluator(dict(), [], [])
-    settings = input.Settings()
+    ev = evaluator.Evaluator({}, [], [])
+    settings = input_handler.Settings()
 
     def __init__(self, init_state, ev, settings):
-        super(SortingHat, self).__init__(init_state)
+        super().__init__(init_state)
         self.ev = ev
         self.settings = settings
 
@@ -40,7 +40,7 @@ def generate_initial_state(settings):
     tmp_members = copy.copy(settings.members)
     for num_members in settings.num_members_in_each_team:
         tmp_team = set()
-        for i in range(num_members):
+        for _ in range(num_members):
             tmp_team.add(tmp_members.pop())
         init_state.append(copy.copy(tmp_team))
     return init_state
@@ -50,10 +50,10 @@ def show_result(state):
     print()
     print("result:")
     for i, team in enumerate(state):
-        print("team {}: {}".format(i, team))
+        print(f"team {i}: {team}")
 
 def main():
-    settings, history, preferences = input.load(sys.argv[1])
+    settings, history, preferences = input_handler.load(sys.argv[1])
     init_state = generate_initial_state(settings)
     ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
     sh = SortingHat(init_state, ev, settings)

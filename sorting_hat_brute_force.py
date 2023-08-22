@@ -1,17 +1,15 @@
 #!/usr/bin/python3
 
-from simanneal import Annealer
-import random
 import copy
 import sys
 import evaluator
-import input
+import input_handler
 
 INFINITY = 10000
 
 class SortingHatBruteForce():
-    ev = evaluator.Evaluator(dict(), [], [])
-    settings = input.Settings()
+    ev = evaluator.Evaluator({}, [], [])
+    settings = input_handler.Settings()
     state = []
     best_state = []
     best_energy = 0
@@ -36,7 +34,7 @@ class SortingHatBruteForce():
                 self.best_energy = v
             return
 
-        for i in range(len(current_num_members_in_each_team)):
+        for i, _ in enumerate(current_num_members_in_each_team):
             if current_num_members_in_each_team[i] == 0:
                 continue
             current_num_members_in_each_team[i] = current_num_members_in_each_team[i] - 1
@@ -50,10 +48,10 @@ class SortingHatBruteForce():
 def show_result(state):
     print("result:")
     for i, team in enumerate(state):
-        print("team {}: {}".format(i, team))
+        print(f"team {i}: {team}")
 
 def main():
-    settings, history, preferences = input.load(sys.argv[1])
+    settings, history, preferences = input_handler.load(sys.argv[1])
     ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
     shbf = SortingHatBruteForce(ev, settings)
     shbf.search()

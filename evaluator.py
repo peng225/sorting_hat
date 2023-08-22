@@ -1,11 +1,9 @@
-import input
-
 class Evaluator:
     LARGE_VALUE = 10000
     DECAY_RATE = 0.9
-    preferences = dict()
-    history = list()
-    num_remaining_members_in_each_team = list()
+    preferences = {}
+    history = []
+    num_remaining_members_in_each_team = []
 
     def __init__(self, preferences, history, num_remaining_members_in_each_team):
         self.preferences = preferences
