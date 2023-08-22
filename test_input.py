@@ -57,7 +57,7 @@ class TestInput(unittest.TestCase):
     def test_load_preferences(self):
         # Empty preference
         input_preferences = dict()
-        output_preferences = input.load_preferences(input_preferences, [])
+        output_preferences = input.load_preferences(input_preferences, [], 3)
         self.assertEqual(0, len(output_preferences))
 
         # Two preferences
@@ -66,7 +66,7 @@ class TestInput(unittest.TestCase):
             {'name': 'ken', 'num_min_team_members': 2, 'class_anti_affinity': {0, 2}}
         ]
         members =['ryu', 'ken']
-        output_preferences = input.load_preferences(input_preferences, members)
+        output_preferences = input.load_preferences(input_preferences, members, 3)
         self.assertEqual(2, len(output_preferences))
         self.assertEqual(1, output_preferences['ryu'].num_min_team_members)
         self.assertEqual(2, output_preferences['ken'].num_min_team_members)

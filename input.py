@@ -23,7 +23,7 @@ def load(file_name):
     if s == None:
         sys.exit(1)
     h = load_history(config['history'])
-    p = load_preferences(config['preferences'], s.members)
+    p = load_preferences(config['preferences'], s.members, len(s.num_members_in_each_team))
     if p == None:
         sys.exit(1)
     return s, h, p
@@ -35,16 +35,20 @@ def load_settings(input_settings):
     if len(settings.num_members_in_each_team) != len(settings.num_remaining_members_in_each_team):
         print("The number of elements in 'num_members_in_each_team' and 'num_remaining_members_in_each_team' must be the same.")
         return None
+    if len(settings.num_members_in_each_team) < 2:
+        print("The number of teams must be larger than or equal to 2.")
+        return None
+
     settings.members = set(input_settings['members'])
     if len(settings.members) <= 1:
         print("The number of members should be larger than 1.")
         return None
-
     if sum(settings.num_members_in_each_team) != len(settings.members):
         print("Invalid settings. (settings.num_members_in_each_team = {}, len(settings.members) = {})".format(
             settings.num_members_in_each_team,
             len(settings.members)))
         return None
+
     return settings
 
 def load_history(input_history):
@@ -58,7 +62,7 @@ def load_history(input_history):
 
     return history
 
-def load_preferences(input_preferences, members):
+def load_preferences(input_preferences, members, num_teams):
     preferences = dict()
     for pref in input_preferences:
         name = pref['name']
@@ -68,6 +72,10 @@ def load_preferences(input_preferences, members):
         class_anti_affinity = set()
         if 'class_anti_affinity' in pref:
             class_anti_affinity = set(pref['class_anti_affinity'])
+            for caa in class_anti_affinity:
+                if num_teams <= caa:
+                    print("Each value of 'class_anti_affinity' must be less than the number of teams.")
+                    return None
         num_min_team_members = 0
         if 'num_min_team_members' in pref:
             num_min_team_members = pref['num_min_team_members']
