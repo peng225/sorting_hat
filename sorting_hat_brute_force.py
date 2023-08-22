@@ -10,20 +10,22 @@ import input
 INFINITY = 10000
 
 class SortingHatBruteForce():
-    ev = evaluator.Evaluator(dict(), [])
+    ev = evaluator.Evaluator(dict(), [], [])
+    settings = input.Settings()
     state = []
     best_state = []
     best_energy = 0
 
-    def __init__(self, ev):
+    def __init__(self, ev, settings):
         self.ev = ev
+        self.settings = settings
 
     def search(self):
         self.best_state = []
         self.best_energy = INFINITY*100
-        self.state = [set() for i in range(len(input.settings.num_members_in_each_team))]
-        current_num_members_in_each_team = copy.copy(input.settings.num_members_in_each_team)
-        current_members = copy.copy(input.settings.members)
+        self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
+        current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
+        current_members = copy.copy(self.settings.members)
         self.search_helper(current_num_members_in_each_team, current_members)
 
     def search_helper(self, current_num_members_in_each_team, current_members):
@@ -51,9 +53,9 @@ def show_result(state):
         print("team {}: {}".format(i, team))
 
 def main():
-    history, preferences = input.load(sys.argv[1])
-    ev = evaluator.Evaluator(preferences, history)
-    shbf = SortingHatBruteForce(ev)
+    settings, history, preferences = input.load(sys.argv[1])
+    ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
+    shbf = SortingHatBruteForce(ev, settings)
     shbf.search()
     show_result(shbf.best_state)
 

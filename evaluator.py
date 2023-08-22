@@ -5,10 +5,12 @@ class Evaluator:
     DECAY_RATE = 0.9
     preferences = dict()
     history = list()
+    num_remaining_members_in_each_team = list()
 
-    def __init__(self, preferences, history):
+    def __init__(self, preferences, history, num_remaining_members_in_each_team):
         self.preferences = preferences
         self.history = history
+        self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
 
     def evaluate(self, state):
         v = 0.0
@@ -27,7 +29,7 @@ class Evaluator:
                 continue
 
             prev_team = self.history[0][ti]
-            if len(team & prev_team) < input.settings.num_remaining_members_in_each_team[ti]:
+            if len(team & prev_team) < self.num_remaining_members_in_each_team[ti]:
                 v += self.LARGE_VALUE
 
         for hi, past_teams in enumerate(self.history):

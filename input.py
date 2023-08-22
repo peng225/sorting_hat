@@ -7,8 +7,6 @@ class Settings:
     num_remaining_members_in_each_team = []
     members = set()
 
-settings = Settings()
-
 class Preference:
     class_anti_affinity = set()
     num_min_team_members = 0
@@ -21,22 +19,30 @@ def load(file_name):
     with open(file_name, 'r') as yml:
         config = yaml.safe_load(yml)
 
-    load_settings(config['settings'])
+    s = load_settings(config['settings'])
+    if s == None:
+        sys.exit(1)
     h = load_history(config['history'])
-    p = load_preferences(config['preferences'])
-    return h, p
+    p = load_preferences(config['preferences'], s.members)
+    if p == None:
+        sys.exit(1)
+    return s, h, p
 
 def load_settings(input_settings):
+    settings = Settings()
     settings.num_members_in_each_team = input_settings['num_members_in_each_team']
     settings.num_remaining_members_in_each_team = input_settings['num_remaining_members_in_each_team']
     if len(settings.num_members_in_each_team) != len(settings.num_remaining_members_in_each_team):
         print("The number of elements in 'num_members_in_each_team' and 'num_remaining_members_in_each_team' must be the same.")
-        sys.exit(1)
+        return None
     settings.members = set(input_settings['members'])
 
     if sum(settings.num_members_in_each_team) != len(settings.members):
-        print("invalid settings.")
-        sys.exit(1)
+        print("Invalid settings. (settings.num_members_in_each_team = {}, len(settings.members) = {})".format(
+            settings.num_members_in_each_team,
+            len(settings.members)))
+        return None
+    return settings
 
 def load_history(input_history):
     history = []
@@ -49,13 +55,13 @@ def load_history(input_history):
 
     return history
 
-def load_preferences(input_preferences):
+def load_preferences(input_preferences, members):
     preferences = dict()
     for pref in input_preferences:
         name = pref['name']
-        if name not in settings.members:
+        if name not in members:
             print("preference for invalid member '{}' found.".format(name))
-            sys.exit(1)
+            return None
         class_anti_affinity = set()
         if 'class_anti_affinity' in pref:
             class_anti_affinity = set(pref['class_anti_affinity'])

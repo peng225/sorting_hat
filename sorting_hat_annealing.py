@@ -10,11 +10,13 @@ import input
 INFINITY = 10000
 
 class SortingHat(Annealer):
-    ev = evaluator.Evaluator(dict(), [])
+    ev = evaluator.Evaluator(dict(), [], [])
+    settings = input.Settings()
 
-    def __init__(self, init_state, ev):
+    def __init__(self, init_state, ev, settings):
         super(SortingHat, self).__init__(init_state)
         self.ev = ev
+        self.settings = settings
 
     def move(self):
         ti1 = random.randint(0, len(self.state)-1)
@@ -33,10 +35,10 @@ class SortingHat(Annealer):
         return self.ev.evaluate(self.state)
 
 
-def generate_initial_state():
+def generate_initial_state(settings):
     init_state = []
-    tmp_members = copy.copy(input.settings.members)
-    for num_members in input.settings.num_members_in_each_team:
+    tmp_members = copy.copy(settings.members)
+    for num_members in settings.num_members_in_each_team:
         tmp_team = set()
         for i in range(num_members):
             tmp_team.add(tmp_members.pop())
@@ -51,10 +53,10 @@ def show_result(state):
         print("team {}: {}".format(i, team))
 
 def main():
-    history, preferences = input.load(sys.argv[1])
-    init_state = generate_initial_state()
-    ev = evaluator.Evaluator(preferences, history)
-    sh = SortingHat(init_state, ev)
+    settings, history, preferences = input.load(sys.argv[1])
+    init_state = generate_initial_state(settings)
+    ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
+    sh = SortingHat(init_state, ev, settings)
     sh.steps = 100000
     sh.copy_strategy = "deepcopy"
     sh.anneal()
