@@ -44,7 +44,9 @@ class Evaluator:
                         continue
                     past_other_members = past_team - {member}
                     intersect = other_members & past_other_members
-                    v += (self.DECAY_RATE**hi)*len(intersect)
+                    # To eliminate the double count for each member per one combination,
+                    # the added value is divided by 2.0.
+                    v += (self.DECAY_RATE**hi)*len(intersect) / 2.0
         return v
 
     def find_team(self, member, teams):
