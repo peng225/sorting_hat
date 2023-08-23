@@ -1,7 +1,7 @@
 import unittest
 import input_handler
 
-class TestInput(unittest.TestCase):
+class TestInputHandler(unittest.TestCase):
     def setUp(self):
         pass
 
