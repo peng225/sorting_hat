@@ -11,7 +11,7 @@ There are two execution files each of which uses a different algorithm.
 
 ## Input file format
 
-Input file format is in the YAML format. The detailed format is as follows. See also the [sample_input.yaml](./sample_input.yaml).
+Input file is in the YAML format. The detailed format is as follows. See also the [sample_input.yaml](./sample_input.yaml).
 
 - settings
   - num_members_in_each_team
