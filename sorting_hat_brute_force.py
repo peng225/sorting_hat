@@ -45,17 +45,18 @@ class SortingHatBruteForce():
             current_members.add(tmp_member)
             current_num_members_in_each_team[i] = current_num_members_in_each_team[i] + 1
 
-def show_result(state):
-    print("result:")
-    for i, team in enumerate(state):
-        print(f"team {i}: {team}")
+    def show_result(self):
+        print("result:")
+        print(f"value: {self.best_energy}")
+        for i, team in enumerate(self.best_state):
+            print(f"team {i}: {team}")
 
 def main():
     settings, history, preferences = input_handler.load(sys.argv[1])
     ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
     shbf = SortingHatBruteForce(ev, settings)
     shbf.search()
-    show_result(shbf.best_state)
+    shbf.show_result()
 
 if __name__ == '__main__':
     main()

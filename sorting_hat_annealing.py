@@ -34,6 +34,13 @@ class SortingHat(Annealer):
     def energy(self):
         return self.ev.evaluate(self.state)
 
+    def show_result(self):
+        print()
+        print()
+        print("result:")
+        print(f"value: {self.best_energy}")
+        for i, team in enumerate(self.best_state):
+            print(f"team {i}: {team}")
 
 def generate_initial_state(settings):
     init_state = []
@@ -45,13 +52,6 @@ def generate_initial_state(settings):
         init_state.append(copy.copy(tmp_team))
     return init_state
 
-def show_result(state):
-    print()
-    print()
-    print("result:")
-    for i, team in enumerate(state):
-        print(f"team {i}: {team}")
-
 def main():
     settings, history, preferences = input_handler.load(sys.argv[1])
     init_state = generate_initial_state(settings)
@@ -60,7 +60,7 @@ def main():
     sh.steps = 100000
     sh.copy_strategy = "deepcopy"
     sh.anneal()
-    show_result(sh.state)
+    sh.show_result()
 
 if __name__ == '__main__':
     main()
