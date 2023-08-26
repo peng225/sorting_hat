@@ -7,8 +7,6 @@ from simanneal import Annealer
 import evaluator
 import input_handler
 
-INFINITY = 10000
-
 class SortingHat(Annealer):
     ev: evaluator.Evaluator
     settings: input_handler.Settings
