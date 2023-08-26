@@ -1,12 +1,20 @@
+from dataclasses import dataclass
 import sys
 import copy
 import yaml
 
+@dataclass
 class Settings:
     num_members_in_each_team = []
     num_remaining_members_in_each_team = []
     members = set()
 
+    def __init__(self, num_members_in_each_team, num_remaining_members_in_each_team, members):
+        self.num_members_in_each_team = num_members_in_each_team
+        self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
+        self.members = members
+
+@dataclass
 class Preference:
     class_anti_affinity = set()
     num_min_team_members = 0
@@ -29,10 +37,10 @@ def load(file_name):
     return s, h, p
 
 def load_settings(input_settings):
-    settings = Settings()
-    settings.num_members_in_each_team = input_settings['num_members_in_each_team']
-    settings.num_remaining_members_in_each_team =\
-        input_settings['num_remaining_members_in_each_team']
+    settings = Settings(input_settings['num_members_in_each_team'],
+                        input_settings['num_remaining_members_in_each_team'],
+                        set(input_settings['members']))
+
     if len(settings.num_members_in_each_team) != len(settings.num_remaining_members_in_each_team):
         print("The number of elements in 'num_members_in_each_team' and \
               'num_remaining_members_in_each_team' must be the same.")
@@ -40,8 +48,6 @@ def load_settings(input_settings):
     if len(settings.num_members_in_each_team) < 2:
         print("The number of teams must be larger than or equal to 2.")
         return None
-
-    settings.members = set(input_settings['members'])
     if len(settings.members) <= 1:
         print("The number of members should be larger than 1.")
         return None

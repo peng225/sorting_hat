@@ -5,11 +5,11 @@ import sys
 import evaluator
 import input_handler
 
-INFINITY = 10000
+INFINITY = 10000000
 
 class SortingHatBruteForce():
-    ev = evaluator.Evaluator({}, [], [])
-    settings = input_handler.Settings()
+    ev: evaluator.Evaluator
+    settings: input_handler.Settings
     state = []
     best_state = []
     best_energy = 0
@@ -20,7 +20,7 @@ class SortingHatBruteForce():
 
     def search(self):
         self.best_state = []
-        self.best_energy = INFINITY*100
+        self.best_energy = INFINITY
         self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
         current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
         current_members = copy.copy(self.settings.members)

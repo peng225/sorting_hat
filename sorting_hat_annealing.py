@@ -10,8 +10,8 @@ import input_handler
 INFINITY = 10000
 
 class SortingHat(Annealer):
-    ev = evaluator.Evaluator({}, [], [])
-    settings = input_handler.Settings()
+    ev: evaluator.Evaluator
+    settings: input_handler.Settings
 
     def __init__(self, init_state, ev, settings):
         super().__init__(init_state)
