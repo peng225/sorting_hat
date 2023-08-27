@@ -4,7 +4,7 @@ from simanneal import Annealer
 import evaluator
 import input_handler
 
-class AnnealingClassifier(Annealer):
+class AnnealingAssigner(Annealer):
     ev: evaluator.Evaluator
     settings: input_handler.Settings
 
