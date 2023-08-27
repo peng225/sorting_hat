@@ -11,10 +11,8 @@ on:
     - '**.md'
 
 jobs:
-  build:
-
+  tests:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -26,6 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install simanneal
         pip install pyyaml
-    - name: Run tests
+    - name: Run unit tests
       run: |
-        python -m unittest -v test_**.py
+        make test PYTHON=python
+    - name: Run e2e tests
+      run: |
+        make e2e-test PYTHON=python
