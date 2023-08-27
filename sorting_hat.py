@@ -26,12 +26,12 @@ def main():
                              settings.num_remaining_members_in_each_team)
 
     if args.algorithm == "brute_force":
-        bfc = brute_force.BruteForceClassifier(ev, settings)
+        bfc = brute_force.BruteForceAssigner(ev, settings)
         bfc.search()
         bfc.show_result()
     elif args.algorithm == "annealing":
         init_state = annealing.generate_initial_state(settings)
-        anc = annealing.AnnealingClassifier(init_state, ev, settings)
+        anc = annealing.AnnealingAssigner(init_state, ev, settings)
         anc.steps = args.steps
         anc.Tmax = args.tmax
         anc.copy_strategy = "deepcopy"
