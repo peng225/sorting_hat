@@ -2,12 +2,17 @@
 
 Sorting Hat is a team classification tool inspired by [this blog post](https://qiita.com/matsulib/items/bd50af2e2bc1e48522cd).
 
-## Two algorithms
+## Install dependencies
 
-There are two execution files each of which uses a different algorithm.
+```sh
+python -m pip install --upgrade pip
+pip install simanneal
+pip install pyyaml
+```
 
-- sorting_hat_brute_force.py: Solves the problem by the brute force search.
-- sorting_hat_annealing.py: Solves the problem by the simulated annealing.
+## Algorithms
+
+There are two algorithms to solve the team classification problem: the brute force search and the simulated annealing. The algorithm can be specified by `--algorithm` option (default = `brute_force`).
 
 ## Input file format
 

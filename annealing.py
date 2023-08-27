@@ -1,13 +1,10 @@
-#!/usr/bin/python3
-
 import random
 import copy
-import argparse
 from simanneal import Annealer
 import evaluator
 import input_handler
 
-class SortingHat(Annealer):
+class AnnealingClassifier(Annealer):
     ev: evaluator.Evaluator
     settings: input_handler.Settings
 
@@ -49,27 +46,3 @@ def generate_initial_state(settings):
             tmp_team.add(tmp_members.pop())
         init_state.append(copy.copy(tmp_team))
     return init_state
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filename', metavar='FILE_NAME', type=str, nargs='?',
-                    help='input file name')
-    parser.add_argument('--steps', dest='steps', action='store',
-                        type=int, default=10000,
-                    help='the number of annealing steps')
-    parser.add_argument('--max_temp', dest='tmax', action='store',
-                        type=float, default=25000.0,
-                        help='the maximum temperature of annealing')
-    args = parser.parse_args()
-    settings, history, preferences = input_handler.load(args.filename)
-    init_state = generate_initial_state(settings)
-    ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
-    sh = SortingHat(init_state, ev, settings)
-    sh.steps = args.steps
-    sh.Tmax = args.tmax
-    sh.copy_strategy = "deepcopy"
-    sh.anneal()
-    sh.show_result()
-
-if __name__ == '__main__':
-    main()

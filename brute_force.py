@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import copy
 import sys
 import evaluator
@@ -7,7 +5,7 @@ import input_handler
 
 INFINITY = 10000000
 
-class SortingHatBruteForce():
+class BruteForceClassifier():
     ev: evaluator.Evaluator
     settings: input_handler.Settings
     state = []
@@ -54,7 +52,7 @@ class SortingHatBruteForce():
 def main():
     settings, history, preferences = input_handler.load(sys.argv[1])
     ev = evaluator.Evaluator(preferences, history, settings.num_remaining_members_in_each_team)
-    shbf = SortingHatBruteForce(ev, settings)
+    shbf = BruteForceClassifier(ev, settings)
     shbf.search()
     shbf.show_result()
 
