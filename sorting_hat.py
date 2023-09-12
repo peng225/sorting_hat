@@ -19,6 +19,9 @@ def main():
     parser.add_argument('--max_temp', dest='tmax', action='store',
                         type=float, default=25000.0,
                         help='(for annealing algorithm) the maximum temperature of annealing')
+    parser.add_argument('--top', dest='num_results', action='store',
+                        type=int, default=1,
+                        help='(for brute force algorithm) the number of results')
     args = parser.parse_args()
 
     settings, preferences, history = input_handler.load(args.filename)
@@ -26,7 +29,7 @@ def main():
                              settings.num_remaining_members_in_each_team)
 
     if args.algorithm == "brute_force":
-        bfa = brute_force.BruteForceAssigner(ev, settings)
+        bfa = brute_force.BruteForceAssigner(ev, settings, args.num_results)
         bfa.search()
         bfa.show_result()
     elif args.algorithm == "annealing":

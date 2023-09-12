@@ -7,17 +7,19 @@ INFINITY = 10000000
 class BruteForceAssigner():
     ev: evaluator.Evaluator
     settings: input_handler.Settings
+    num_results: int
     state = []
-    best_state = []
-    best_energy = 0
+    best_states = []
+    best_energies = []
 
-    def __init__(self, ev, settings):
+    def __init__(self, ev, settings, num_result):
         self.ev = ev
         self.settings = settings
+        self.num_results = num_result
 
     def search(self):
-        self.best_state = []
-        self.best_energy = INFINITY
+        self.best_states = [[] for i in range(self.num_results)]
+        self.best_energies = [INFINITY for i in range(self.num_results)]
         self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
         current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
         current_members = copy.copy(self.settings.members)
@@ -26,9 +28,13 @@ class BruteForceAssigner():
     def search_helper(self, current_num_members_in_each_team, current_members):
         if sum(current_num_members_in_each_team) == 0:
             v = self.ev.evaluate(self.state)
-            if v < self.best_energy:
-                self.best_state = copy.deepcopy(self.state)
-                self.best_energy = v
+            for i, be in enumerate(self.best_energies):
+                if v < be:
+                    self.best_states = self.best_states[:i] + \
+                        [copy.deepcopy(self.state)] + self.best_states[i:-1]
+                    self.best_energies = self.best_energies[:i] + \
+                        [v] + self.best_energies[i:-1]
+                    break
             return
 
         for i, _ in enumerate(current_num_members_in_each_team):
@@ -44,6 +50,9 @@ class BruteForceAssigner():
 
     def show_result(self):
         print("result:")
-        print(f"value: {self.best_energy}")
-        for i, team in enumerate(self.best_state):
-            print(f"team {i}: {team}")
+        for i, be in enumerate(self.best_energies):
+            print(f"order: {i}")
+            print(f"value: {be}")
+            for j, team in enumerate(self.best_states[i]):
+                print(f"team {j}: {team}")
+            print("")
