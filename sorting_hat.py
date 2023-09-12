@@ -26,17 +26,17 @@ def main():
                              settings.num_remaining_members_in_each_team)
 
     if args.algorithm == "brute_force":
-        bfc = brute_force.BruteForceAssigner(ev, settings)
-        bfc.search()
-        bfc.show_result()
+        bfa = brute_force.BruteForceAssigner(ev, settings)
+        bfa.search()
+        bfa.show_result()
     elif args.algorithm == "annealing":
         init_state = annealing.generate_initial_state(settings)
-        anc = annealing.AnnealingAssigner(init_state, ev, settings)
-        anc.steps = args.steps
-        anc.Tmax = args.tmax
-        anc.copy_strategy = "deepcopy"
-        anc.anneal()
-        anc.show_result()
+        ana = annealing.AnnealingAssigner(init_state, ev, settings)
+        ana.steps = args.steps
+        ana.Tmax = args.tmax
+        ana.copy_strategy = "deepcopy"
+        ana.anneal()
+        ana.show_result()
     else:
         print(f"invalid algorithm: {args.algorithm}")
 
