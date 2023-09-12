@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import sys
 import argparse
 import evaluator
 import input_handler
@@ -15,14 +16,24 @@ def main():
                         help='search algorithm ("brute_force" or "annealing")')
     parser.add_argument('--steps', dest='steps', action='store',
                         type=int, default=10000,
-                        help='(for annealing algorithm) the number of annealing steps')
+                        help='(for annealing algorithm) the number of annealing steps (> 0)')
     parser.add_argument('--max_temp', dest='tmax', action='store',
                         type=float, default=25000.0,
-                        help='(for annealing algorithm) the maximum temperature of annealing')
+                        help='(for annealing algorithm) the maximum temperature of annealing (> 0)')
     parser.add_argument('--top', dest='num_results', action='store',
                         type=int, default=1,
-                        help='(for brute force algorithm) the number of results')
+                        help='(for brute force algorithm) the number of results (> 0)')
     args = parser.parse_args()
+
+    if args.steps <= 0:
+        print(f"invalid value of steps: {args.steps}")
+        sys.exit(1)
+    if args.tmax <= 0:
+        print(f"invalid value of max_temp: {args.tmax}")
+        sys.exit(1)
+    if args.num_results <= 0:
+        print(f"invalid value of num_results: {args.num_results}")
+        sys.exit(1)
 
     settings, preferences, history = input_handler.load(args.filename)
     ev = evaluator.Evaluator(preferences, history,
