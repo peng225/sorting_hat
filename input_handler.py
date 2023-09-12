@@ -30,11 +30,12 @@ def load(file_name):
     s = load_settings(config['settings'])
     if s is None:
         sys.exit(1)
+    p = load_preferences(config['preferences'],
+                         s.members, len(s.num_members_in_each_team))
     h = load_history(config['history'])
-    p = load_preferences(config['preferences'], s.members, len(s.num_members_in_each_team))
     if p is None:
         sys.exit(1)
-    return s, h, p
+    return s, p, h
 
 def load_settings(input_settings):
     settings = Settings(input_settings['num_members_in_each_team'],

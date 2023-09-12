@@ -19,24 +19,27 @@ def main():
     parser.add_argument('--max_temp', dest='tmax', action='store',
                         type=float, default=25000.0,
                         help='(for annealing algorithm) the maximum temperature of annealing')
+    parser.add_argument('--top', dest='num_results', action='store',
+                        type=int, default=1,
+                        help='(for brute force algorithm) the number of results')
     args = parser.parse_args()
 
-    settings, history, preferences = input_handler.load(args.filename)
+    settings, preferences, history = input_handler.load(args.filename)
     ev = evaluator.Evaluator(preferences, history,
                              settings.num_remaining_members_in_each_team)
 
     if args.algorithm == "brute_force":
-        bfc = brute_force.BruteForceAssigner(ev, settings)
-        bfc.search()
-        bfc.show_result()
+        bfa = brute_force.BruteForceAssigner(ev, settings, args.num_results)
+        bfa.search()
+        bfa.show_result()
     elif args.algorithm == "annealing":
         init_state = annealing.generate_initial_state(settings)
-        anc = annealing.AnnealingAssigner(init_state, ev, settings)
-        anc.steps = args.steps
-        anc.Tmax = args.tmax
-        anc.copy_strategy = "deepcopy"
-        anc.anneal()
-        anc.show_result()
+        ana = annealing.AnnealingAssigner(init_state, ev, settings)
+        ana.steps = args.steps
+        ana.Tmax = args.tmax
+        ana.copy_strategy = "deepcopy"
+        ana.anneal()
+        ana.show_result()
     else:
         print(f"invalid algorithm: {args.algorithm}")
 
