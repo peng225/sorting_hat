@@ -21,7 +21,7 @@ def main():
                         help='(for annealing algorithm) the maximum temperature of annealing')
     args = parser.parse_args()
 
-    settings, history, preferences = input_handler.load(args.filename)
+    settings, preferences, history = input_handler.load(args.filename)
     ev = evaluator.Evaluator(preferences, history,
                              settings.num_remaining_members_in_each_team)
 

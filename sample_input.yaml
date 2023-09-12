@@ -2,12 +2,6 @@ settings:
   num_members_in_each_team: [3, 2, 3]
   num_remaining_members_in_each_team: [1, 1, 1]
   members: ["taro", "jiro", "saburo", "kenta", "takashi", "takuya", "hayato", "masao"]
-history:
-  # Latest
-  - [["taro", "jiro", "saburo"], ["kenta", "takashi"], ["takuya", "hayato", "masao"]]
-  - [["taro", "kenta", "takuya"], ["jiro", "masao"], ["saburo", "takashi", "hayato"]]
-  - [["saburo", "masao", "kenta", "takuya"], ["jiro", "taro", "hayato"]]
-  # Oldest
 preferences:
   - name: "taro"
     num_min_team_members: 3
@@ -15,3 +9,9 @@ preferences:
     num_min_team_members: 3
   - name: "takashi"
     class_anti_affinity: [0, 1]
+history:
+  # Latest
+  - [["taro", "jiro", "saburo"], ["kenta", "takashi"], ["takuya", "hayato", "masao"]]
+  - [["taro", "kenta", "takuya"], ["jiro", "masao"], ["saburo", "takashi", "hayato"]]
+  - [["saburo", "masao", "kenta", "takuya"], ["jiro", "taro", "hayato"]]
+  # Oldest

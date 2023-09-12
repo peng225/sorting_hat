@@ -42,10 +42,6 @@ Input file is in the YAML format. The detailed format is as follows. See also th
     - type: list of strings
     - required: true
     - description: The name of each member.
-- history
-  - type: list of lists of strings
-  - required: false
-  - description: The history of team assignment. The values in the list must be in chronological order. The latest history must come first.
 - preferences
   - type: list of the tuple of the following values
   - required: false
@@ -61,3 +57,7 @@ Input file is in the YAML format. The detailed format is as follows. See also th
       - type: list of integers
       - required: false
       - description: The list of class IDs to which the member must not be assigned.
+- history
+  - type: list of lists of strings
+  - required: false
+  - description: The history of team assignment. The values in the list must be in chronological order. The latest history must come first.
