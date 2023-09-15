@@ -2,8 +2,6 @@ import copy
 import evaluator
 import input_handler
 
-INFINITY = 10000000
-
 class BruteForceAssigner():
     ev: evaluator.Evaluator
     settings: input_handler.Settings
@@ -19,7 +17,7 @@ class BruteForceAssigner():
 
     def search(self):
         self.best_states = [[] for i in range(self.num_results)]
-        self.best_energies = [INFINITY for i in range(self.num_results)]
+        self.best_energies = [float('inf') for i in range(self.num_results)]
         self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
         current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
         current_members = copy.copy(self.settings.members)

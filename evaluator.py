@@ -1,14 +1,17 @@
 class Evaluator:
     LARGE_VALUE = 10000
     DECAY_RATE = 0.9
+    diff_team_prefer_rate: float
     preferences = {}
     history = []
     num_remaining_members_in_each_team = []
 
-    def __init__(self, preferences, history, num_remaining_members_in_each_team):
+    def __init__(self, preferences, history,num_remaining_members_in_each_team,
+                 diff_team_prefer_rate = 1.0):
         self.preferences = preferences
         self.history = history
         self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
+        self.diff_team_prefer_rate = diff_team_prefer_rate
 
     def evaluate(self, state):
         v = 0.0
@@ -30,12 +33,13 @@ class Evaluator:
             if len(team & prev_team) < self.num_remaining_members_in_each_team[ti]:
                 v += self.LARGE_VALUE
 
+        # Check preferable conditions.
         for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(state):
                 for member in team:
                     # Each member prefers to be assigned to a different team from past assignments.
                     if ti < len(past_teams) and member in past_teams[ti]:
-                        v += self.DECAY_RATE**hi
+                        v += self.diff_team_prefer_rate * self.DECAY_RATE**hi
 
                     # Different combinations of members are preferable.
                     other_members = team - {member}

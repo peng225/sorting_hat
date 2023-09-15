@@ -23,6 +23,9 @@ def main():
     parser.add_argument('--top', dest='num_results', action='store',
                         type=int, default=1,
                         help='(for brute force algorithm) the number of results (> 0)')
+    parser.add_argument('--diff_team_prefer_rate', dest='diff_team_prefer_rate', action='store',
+                        type=float, default=1.0,
+                        help='(advanced option) see implementation of evaluator')
     args = parser.parse_args()
 
     if args.steps <= 0:
@@ -34,10 +37,15 @@ def main():
     if args.num_results <= 0:
         print(f"invalid value of num_results: {args.num_results}")
         sys.exit(1)
+    if args.diff_team_prefer_rate < 0:
+        print(
+            f"invalid value of diff_team_prefer_rate: {args.diff_team_prefer_rate}")
+        sys.exit(1)
 
     settings, preferences, history = input_handler.load(args.filename)
     ev = evaluator.Evaluator(preferences, history,
-                             settings.num_remaining_members_in_each_team)
+                             settings.num_remaining_members_in_each_team,
+                             args.diff_team_prefer_rate)
 
     if args.algorithm == "brute_force":
         bfa = brute_force.BruteForceAssigner(ev, settings, args.num_results)
