@@ -13,10 +13,10 @@ class Evaluator:
         self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
         self.diff_team_prefer_rate = diff_team_prefer_rate
 
-    def evaluate(self, state):
+    # Check constraints.
+    # When a constraint is violated, a very large value is added to the result.
+    def __calc_constraint_score(self, state):
         v = 0.0
-        # Check constraints.
-        # When a constraint is violated, a very large value is added to the energy.
         for ti, team in enumerate(state):
             for member in team:
                 if member not in self.preferences:
@@ -33,7 +33,13 @@ class Evaluator:
             if len(team & prev_team) < self.num_remaining_members_in_each_team[ti]:
                 v += self.LARGE_VALUE
 
-        # Check preferable conditions.
+            if team == prev_team:
+                v += self.LARGE_VALUE
+        return v
+
+    # Check preferable conditions and calculate the score.
+    def __calc_preferable_condition_score(self, state):
+        v = 0.0
         for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(state):
                 for member in team:
@@ -51,6 +57,12 @@ class Evaluator:
                     # To eliminate the double count for each member per one combination,
                     # the added value is divided by 2.0.
                     v += (self.DECAY_RATE**hi)*len(intersect) / 2.0
+        return v
+
+    def evaluate(self, state):
+        v = 0.0
+        v += self.__calc_constraint_score(state)
+        v += self.__calc_preferable_condition_score(state)
         return v
 
     def find_team(self, member, teams):
