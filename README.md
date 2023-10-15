@@ -8,6 +8,7 @@ Consider the situation where there are several persons and teams. Each person is
 
 - People want to be assigned to a different team as possible.
   - But a few members may have to stay in the same team.
+  - It is not allowed for a team to have completely the same members as the previous one.
 - People want to be on a team with different people every time they change teams.
 - Some people may want to avoid specific teams.
 - Some people may not want to be assigned to a too-small team.

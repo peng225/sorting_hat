@@ -32,6 +32,9 @@ class Evaluator:
             prev_team = self.history[0][ti]
             if len(team & prev_team) < self.num_remaining_members_in_each_team[ti]:
                 v += self.LARGE_VALUE
+            
+            if team == prev_team:
+                v += self.LARGE_VALUE
 
         # Check preferable conditions.
         for hi, past_teams in enumerate(self.history):
