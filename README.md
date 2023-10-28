@@ -1,6 +1,6 @@
 # Sorting Hat
 
-Sorting Hat is a tool, inspired by [this blog post](https://qiita.com/matsulib/items/bd50af2e2bc1e48522cd), to decide the team assignment of people.
+Sorting Hat is a tool to decide the team assignment of people.
 
 ## What kind of problem does Sorting Hat solve?
 
@@ -18,13 +18,8 @@ Consider the situation where there are several persons and teams. Each person is
 
 ```sh
 python -m pip install --upgrade pip
-pip install simanneal
 pip install pyyaml
 ```
-
-## Algorithms
-
-There are two algorithms to solve the team assignment problem: the brute force search and the simulated annealing. The algorithm can be specified by `--algorithm` option (default = `brute_force`).
 
 ## Input file format
 

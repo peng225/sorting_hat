@@ -7,4 +7,3 @@ test:
 .PHONY: e2e-test
 e2e-test:
 	$(PYTHON) sorting_hat.py sample_input.yaml
-	$(PYTHON) sorting_hat.py --algorithm annealing sample_input.yaml
