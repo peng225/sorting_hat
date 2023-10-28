@@ -8,7 +8,7 @@ class BruteForceAssigner():
     num_results: int
     state = []
     best_states = []
-    best_energies = []
+    best_scores = []
 
     def __init__(self, ev, settings, num_result):
         self.ev = ev
@@ -17,7 +17,8 @@ class BruteForceAssigner():
 
     def search(self):
         self.best_states = [[] for i in range(self.num_results)]
-        self.best_energies = [float('inf') for i in range(self.num_results)]
+        self.best_scores = [(float('inf'), float('inf'), float('inf'))
+                            for i in range(self.num_results)]
         self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
         current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
         current_members = copy.copy(self.settings.members)
@@ -28,12 +29,12 @@ class BruteForceAssigner():
             assert len(
                 current_members) == 0, f"len(current_members) == {len(current_members)}"
             v = self.ev.evaluate(self.state)
-            for i, be in enumerate(self.best_energies):
-                if v < be:
+            for i, bs in enumerate(self.best_scores):
+                if sum(v) < sum(bs):
                     self.best_states = self.best_states[:i] + \
                         [copy.deepcopy(self.state)] + self.best_states[i:-1]
-                    self.best_energies = self.best_energies[:i] + \
-                        [v] + self.best_energies[i:-1]
+                    self.best_scores = self.best_scores[:i] + \
+                        [v] + self.best_scores[i:-1]
                     break
             return
 
@@ -50,9 +51,9 @@ class BruteForceAssigner():
 
     def show_result(self):
         print("result:")
-        for i, be in enumerate(self.best_energies):
+        for i, bs in enumerate(self.best_scores):
             print(f"order: {i}")
-            print(f"value: {be}")
+            print(f"value: {sum(bs)} {bs}")
             for j, team in enumerate(self.best_states[i]):
                 print(f"team {j}: {team}")
             print("")

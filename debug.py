@@ -38,7 +38,7 @@ def main():
                              args.diff_team_prefer_rate)
 
     v = ev.evaluate(state)
-    print(f"value: {v}")
+    print(f"value: {sum(v)} {v}")
 
 if __name__ == '__main__':
     main()
