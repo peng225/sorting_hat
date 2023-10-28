@@ -30,25 +30,25 @@ class TestEvaluator(unittest.TestCase):
             {"m1"}, {"m2", "m3"}, {"m4", "m5"}
         ]
         v = ev.evaluate(state)
-        self.assertEqual(0, v)
+        self.assertEqual(0, sum(v))
 
         # class_anti_affinity is set and it is not violated.
         preferences = {"m2": input_handler.Preference({0, 2}, 0)}
         ev = evaluator.Evaluator(preferences, [], [])
         v = ev.evaluate(state)
-        self.assertEqual(0, v)
+        self.assertEqual(0, sum(v))
 
         # class_anti_affinity is set and it is violated.
         preferences = {"m2": input_handler.Preference({1}, 0)}
         ev = evaluator.Evaluator(preferences, [], [])
         v = ev.evaluate(state)
-        self.assertEqual(ev.LARGE_VALUE, v)
+        self.assertEqual(ev.LARGE_VALUE, v[0])
 
         # num_min_team_members is violated.
         preferences = {"m2": input_handler.Preference(set(), 3)}
         ev = evaluator.Evaluator(preferences, [], [])
         v = ev.evaluate(state)
-        self.assertEqual(ev.LARGE_VALUE, v)
+        self.assertEqual(ev.LARGE_VALUE, v[0])
 
         # num_remaining_members_in_each_team is not violated.
         history = [
@@ -58,14 +58,14 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertLess(v, ev.LARGE_VALUE)
+        self.assertLess(sum(v), ev.LARGE_VALUE)
 
         # num_remaining_members_in_each_team is violated.
         num_remaining_members_in_each_team = [0, 2, 0]
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertGreater(v, ev.LARGE_VALUE)
+        self.assertGreater(sum(v), ev.LARGE_VALUE)
 
     def test_evaluate_check_history_check(self):
         # One history with the same number of teams.
@@ -79,7 +79,7 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertEqual(0, v)
+        self.assertEqual(0, sum(v))
 
         # One history with the same number of teams.
         # All members changes their combinations,
@@ -90,7 +90,7 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertAlmostEqual(1.0, v)
+        self.assertAlmostEqual(1.0, v[1])
 
         # One history with the same number of teams.
         # All members changes their teams,
@@ -101,7 +101,7 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertAlmostEqual(1.0, v)
+        self.assertAlmostEqual(1.0, v[2])
 
         # One history with the different number of teams.
         # "m4" and "m5" were in the same team which no longer exists.
@@ -111,7 +111,7 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertAlmostEqual(1.0, v)
+        self.assertAlmostEqual(1.0, v[2])
 
         # One history with the same number of teams.
         # A new member is added.
@@ -121,7 +121,7 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertEqual(0, v)
+        self.assertEqual(0, sum(v))
 
         # Two histories with the same number of teams.
         history = [
@@ -131,4 +131,5 @@ class TestEvaluator(unittest.TestCase):
         ev = evaluator.Evaluator(
             {}, history, num_remaining_members_in_each_team)
         v = ev.evaluate(state)
-        self.assertAlmostEqual(2.0 * ev.DECAY_RATE, v)
+        self.assertAlmostEqual(1.0 * ev.DECAY_RATE, v[1])
+        self.assertAlmostEqual(1.0 * ev.DECAY_RATE, v[2])

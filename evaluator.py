@@ -39,13 +39,14 @@ class Evaluator:
 
     # Check preferable conditions and calculate the score.
     def __calc_preferable_condition_score(self, state):
-        v = 0.0
+        sameTeamScore = 0.0
+        sameCombinationScore = 0.0
         for hi, past_teams in enumerate(self.history):
             for ti, team in enumerate(state):
                 for member in team:
                     # Each member prefers to be assigned to a different team from past assignments.
                     if ti < len(past_teams) and member in past_teams[ti]:
-                        v += self.diff_team_prefer_rate * self.DECAY_RATE**hi
+                        sameTeamScore += self.diff_team_prefer_rate * self.DECAY_RATE**hi
 
                     # Different combinations of members are preferable.
                     other_members = team - {member}
@@ -56,14 +57,14 @@ class Evaluator:
                     intersect = other_members & past_other_members
                     # To eliminate the double count for each member per one combination,
                     # the added value is divided by 2.0.
-                    v += (self.DECAY_RATE**hi)*len(intersect) / 2.0
-        return v
+                    sameCombinationScore += (self.DECAY_RATE **
+                                             hi)*len(intersect) / 2.0
+        return sameTeamScore, sameCombinationScore
 
     def evaluate(self, state):
-        v = 0.0
-        v += self.__calc_constraint_score(state)
-        v += self.__calc_preferable_condition_score(state)
-        return v
+        cs = self.__calc_constraint_score(state)
+        sts, scs = self.__calc_preferable_condition_score(state)
+        return cs, sts, scs
 
     def find_team(self, member, teams):
         for team in teams:
