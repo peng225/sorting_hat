@@ -6,8 +6,13 @@ class Evaluator:
     history = []
     num_remaining_members_in_each_team = []
 
-    def __init__(self, preferences, history, num_remaining_members_in_each_team,
-                 diff_team_prefer_rate = 1.0):
+    def __init__(
+        self,
+        preferences,
+        history,
+        num_remaining_members_in_each_team,
+        diff_team_prefer_rate=1.0,
+    ):
         self.preferences = preferences
         self.history = history
         self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
@@ -46,7 +51,9 @@ class Evaluator:
                 for member in team:
                     # Each member prefers to be assigned to a different team from past assignments.
                     if ti < len(past_teams) and member in past_teams[ti]:
-                        sameTeamScore += self.diff_team_prefer_rate * self.DECAY_RATE**hi
+                        sameTeamScore += (
+                            self.diff_team_prefer_rate * self.DECAY_RATE**hi
+                        )
 
                     # Different combinations of members are preferable.
                     other_members = team - {member}
@@ -57,8 +64,9 @@ class Evaluator:
                     intersect = other_members & past_other_members
                     # To eliminate the double count for each member per one combination,
                     # the added value is divided by 2.0.
-                    sameCombinationScore += (self.DECAY_RATE **
-                                             hi)*len(intersect) / 2.0
+                    sameCombinationScore += (
+                        (self.DECAY_RATE**hi) * len(intersect) / 2.0
+                    )
         return sameTeamScore, sameCombinationScore
 
     def evaluate(self, state):

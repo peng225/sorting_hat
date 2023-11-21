@@ -2,7 +2,8 @@ import copy
 import evaluator
 import input_handler
 
-class BruteForceAssigner():
+
+class BruteForceAssigner:
     ev: evaluator.Evaluator
     settings: input_handler.Settings
     num_results: int
@@ -17,8 +18,9 @@ class BruteForceAssigner():
 
     def search(self):
         self.best_states = [[] for i in range(self.num_results)]
-        self.best_scores = [(float('inf'), float('inf'), float('inf'))
-                            for i in range(self.num_results)]
+        self.best_scores = [
+            (float("inf"), float("inf"), float("inf")) for i in range(self.num_results)
+        ]
         num_teams = len(self.settings.min_num_members_in_each_team)
         self.state = [set() for i in range(num_teams)]
         num_assigned_members = [0 for i in range(num_teams)]
@@ -33,10 +35,14 @@ class BruteForceAssigner():
             v = self.ev.evaluate(self.state)
             for i, bs in enumerate(self.best_scores):
                 if sum(v) < sum(bs):
-                    self.best_states = self.best_states[:i] + \
-                        [copy.deepcopy(self.state)] + self.best_states[i:-1]
-                    self.best_scores = self.best_scores[:i] + \
-                        [v] + self.best_scores[i:-1]
+                    self.best_states = (
+                        self.best_states[:i]
+                        + [copy.deepcopy(self.state)]
+                        + self.best_states[i:-1]
+                    )
+                    self.best_scores = (
+                        self.best_scores[:i] + [v] + self.best_scores[i:-1]
+                    )
                     break
             return
 
