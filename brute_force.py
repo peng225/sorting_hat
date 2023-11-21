@@ -19,15 +19,17 @@ class BruteForceAssigner():
         self.best_states = [[] for i in range(self.num_results)]
         self.best_scores = [(float('inf'), float('inf'), float('inf'))
                             for i in range(self.num_results)]
-        self.state = [set() for i in range(len(self.settings.num_members_in_each_team))]
-        current_num_members_in_each_team = copy.copy(self.settings.num_members_in_each_team)
-        current_members = copy.copy(self.settings.members)
-        self.search_helper(current_num_members_in_each_team, current_members)
+        num_teams = len(self.settings.min_num_members_in_each_team)
+        self.state = [set() for i in range(num_teams)]
+        num_assigned_members = [0 for i in range(num_teams)]
+        to_be_assigned_members = copy.copy(self.settings.members)
+        self.search_helper(num_assigned_members, to_be_assigned_members)
 
-    def search_helper(self, current_num_members_in_each_team, current_members):
-        if sum(current_num_members_in_each_team) == 0:
-            assert len(
-                current_members) == 0, f"len(current_members) == {len(current_members)}"
+    def search_helper(self, num_assigned_members, to_be_assigned_members):
+        if len(to_be_assigned_members) == 0:
+            for i, n in enumerate(num_assigned_members):
+                if n < self.settings.min_num_members_in_each_team[i]:
+                    return
             v = self.ev.evaluate(self.state)
             for i, bs in enumerate(self.best_scores):
                 if sum(v) < sum(bs):
@@ -38,16 +40,16 @@ class BruteForceAssigner():
                     break
             return
 
-        tmp_member = current_members.pop()
-        for i, _ in enumerate(current_num_members_in_each_team):
-            if current_num_members_in_each_team[i] == 0:
+        tmp_member = to_be_assigned_members.pop()
+        for i, _ in enumerate(num_assigned_members):
+            if num_assigned_members[i] == self.settings.max_num_members_in_each_team[i]:
                 continue
-            current_num_members_in_each_team[i] -= 1
+            num_assigned_members[i] += 1
             self.state[i].add(tmp_member)
-            self.search_helper(current_num_members_in_each_team, current_members)
+            self.search_helper(num_assigned_members, to_be_assigned_members)
             self.state[i].remove(tmp_member)
-            current_num_members_in_each_team[i] += 1
-        current_members.add(tmp_member)
+            num_assigned_members[i] -= 1
+        to_be_assigned_members.add(tmp_member)
 
     def show_result(self):
         print("result:")

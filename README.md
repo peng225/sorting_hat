@@ -26,10 +26,14 @@ pip install pyyaml
 Input file is in the YAML format. The detailed format is as follows. See also the [sample_input.yaml](./sample_input.yaml).
 
 - settings
-  - num_members_in_each_team
+  - min_num_members_in_each_team
     - type: list of integers
     - required: true
-    - description: The number of members in each team. The values in the list must be ordered by team ID.
+    - description: The minimum number of members in each team. The values in the list must be ordered by team ID.
+  - max_num_members_in_each_team
+    - type: list of integers
+    - required: true
+    - description: The maximum number of members in each team. The values in the list must be ordered by team ID.
   - num_remaining_members_in_each_team
     - type: list of integers
     - required: true
@@ -45,7 +49,7 @@ Input file is in the YAML format. The detailed format is as follows. See also th
       - type: string
       - required: true (when preferences are used)
       - description: The name of the member to whom the setting is applied.
-    - num_min_team_members
+    - min_num_team_members
       - type: integer
       - required: false
       - description: The minimum number of members in the assigned team.
