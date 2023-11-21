@@ -1,12 +1,13 @@
 settings:
-  num_members_in_each_team: [3, 2, 3]
+  min_num_members_in_each_team: [2, 1, 2]
+  max_num_members_in_each_team: [4, 3, 3]
   num_remaining_members_in_each_team: [1, 1, 1]
   members: ["taro", "jiro", "saburo", "kenta", "takashi", "takuya", "hayato", "masao"]
 preferences:
   - name: "taro"
-    num_min_team_members: 3
+    min_num_team_members: 3
   - name: "jiro"
-    num_min_team_members: 3
+    min_num_team_members: 3
   - name: "takashi"
     class_anti_affinity: [0, 1]
 history:

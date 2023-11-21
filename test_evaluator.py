@@ -44,7 +44,7 @@ class TestEvaluator(unittest.TestCase):
         v = ev.evaluate(state)
         self.assertEqual(ev.LARGE_VALUE, v[0])
 
-        # num_min_team_members is violated.
+        # min_num_team_members is violated.
         preferences = {"m2": input_handler.Preference(set(), 3)}
         ev = evaluator.Evaluator(preferences, [], [])
         v = ev.evaluate(state)

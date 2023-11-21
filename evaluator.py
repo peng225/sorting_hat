@@ -6,7 +6,7 @@ class Evaluator:
     history = []
     num_remaining_members_in_each_team = []
 
-    def __init__(self, preferences, history,num_remaining_members_in_each_team,
+    def __init__(self, preferences, history, num_remaining_members_in_each_team,
                  diff_team_prefer_rate = 1.0):
         self.preferences = preferences
         self.history = history
@@ -23,7 +23,7 @@ class Evaluator:
                     continue
                 if ti in self.preferences[member].class_anti_affinity:
                     v += self.LARGE_VALUE
-                if len(team) < self.preferences[member].num_min_team_members:
+                if len(team) < self.preferences[member].min_num_team_members:
                     v += self.LARGE_VALUE
 
             if len(self.history) == 0 or len(self.history) <= ti:

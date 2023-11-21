@@ -5,23 +5,26 @@ import yaml
 
 @dataclass
 class Settings:
-    num_members_in_each_team = []
+    min_num_members_in_each_team = []
+    max_num_members_in_each_team = []
     num_remaining_members_in_each_team = []
     members = set()
 
-    def __init__(self, num_members_in_each_team, num_remaining_members_in_each_team, members):
-        self.num_members_in_each_team = num_members_in_each_team
+    def __init__(self, min_num_members_in_each_team, max_num_members_in_each_team,
+                 num_remaining_members_in_each_team, members):
+        self.min_num_members_in_each_team = min_num_members_in_each_team
+        self.max_num_members_in_each_team = max_num_members_in_each_team
         self.num_remaining_members_in_each_team = num_remaining_members_in_each_team
         self.members = members
 
 @dataclass
 class Preference:
     class_anti_affinity = set()
-    num_min_team_members = 0
+    min_num_team_members = 0
 
-    def __init__(self, class_anti_affinity, num_min_team_members):
+    def __init__(self, class_anti_affinity, min_num_team_members):
         self.class_anti_affinity = class_anti_affinity
-        self.num_min_team_members = num_min_team_members
+        self.min_num_team_members = min_num_team_members
 
 def load(file_name):
     with open(file_name, 'r', encoding="utf-8") as yml:
@@ -31,32 +34,60 @@ def load(file_name):
     if s is None:
         sys.exit(1)
     p = load_preferences(config['preferences'],
-                         s.members, len(s.num_members_in_each_team))
+                         s.members, len(s.min_num_members_in_each_team))
     h = load_history(config['history'])
     if p is None:
         sys.exit(1)
     return s, p, h
 
 def load_settings(input_settings):
-    settings = Settings(input_settings['num_members_in_each_team'],
+    settings = Settings(input_settings['min_num_members_in_each_team'],
+                        input_settings['max_num_members_in_each_team'],
                         input_settings['num_remaining_members_in_each_team'],
                         set(input_settings['members']))
 
-    if len(settings.num_members_in_each_team) != len(settings.num_remaining_members_in_each_team):
-        print("The number of elements in 'num_members_in_each_team' and \
-              'num_remaining_members_in_each_team' must be the same.")
+    if (
+        len(settings.min_num_members_in_each_team)
+        != len(settings.max_num_members_in_each_team)
+    ) or (
+        len(settings.min_num_members_in_each_team)
+        != len(settings.num_remaining_members_in_each_team)
+    ):
+        print(
+            "The number of elements in 'min_num_members_in_each_team', \
+'max_num_members_in_each_team' and \
+'num_remaining_members_in_each_team' must be the same."
+        )
         return None
-    if len(settings.num_members_in_each_team) < 2:
+    if len(settings.min_num_members_in_each_team) < 2:
         print("The number of teams must be larger than or equal to 2.")
         return None
-    if len(settings.members) <= 1:
-        print("The number of members should be larger than 1.")
+    if len(settings.members) < sum(settings.min_num_members_in_each_team):
+        print(
+            f"The number of members is too small. \
+(settings.min_num_members_in_each_team = {settings.min_num_members_in_each_team}, \
+len(settings.members) = {len(settings.members)})"
+        )
         return None
-    if sum(settings.num_members_in_each_team) != len(settings.members):
-        print(f"Invalid settings. \
-              (settings.num_members_in_each_team = {settings.num_members_in_each_team,}, \
-              len(settings.members) = {len(settings.members)})")
+    if sum(settings.max_num_members_in_each_team) < len(settings.members):
+        print(
+            f"The number of members is too large. \
+(settings.max_num_members_in_each_team = {settings.max_num_members_in_each_team}, \
+len(settings.members) = {len(settings.members)})"
+        )
         return None
+    for i, _ in enumerate(settings.max_num_members_in_each_team):
+        if (
+            settings.max_num_members_in_each_team[i]
+            < settings.num_remaining_members_in_each_team[i]
+        ):
+            print(
+                f"Each element of 'max_num_members_in_each_team' must be larger than or \
+equal to the corresponding element of 'num_remaining_members_in_each_team'. \
+(i = {i}, settings.max_num_members_in_each_team[i] = {settings.max_num_members_in_each_team[i]}, \
+settings.num_remaining_members_in_each_team[i] = {settings.num_remaining_members_in_each_team[i]})"
+            )
+            return None
 
     return settings
 
@@ -86,9 +117,9 @@ def load_preferences(input_preferences, members, num_teams):
                     print("Each value of 'class_anti_affinity' \
                           must be less than the number of teams.")
                     return None
-        num_min_team_members = 0
-        if 'num_min_team_members' in pref:
-            num_min_team_members = pref['num_min_team_members']
-        preferences[name] = Preference(class_anti_affinity, num_min_team_members)
+        min_num_team_members = 0
+        if 'min_num_team_members' in pref:
+            min_num_team_members = pref['min_num_team_members']
+        preferences[name] = Preference(class_anti_affinity, min_num_team_members)
 
     return preferences
